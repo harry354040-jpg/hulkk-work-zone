@@ -1,0 +1,6 @@
+{
+  "name": "Hulk's Work Zone - Gym & Fitness Platform",
+  "description": "Premium fitness platform and gym in Dabra featuring AI fitness coach in Hindi/Hinglish/English, advanced workout calculators, exercise library, workout builder, and Google Reviews assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
