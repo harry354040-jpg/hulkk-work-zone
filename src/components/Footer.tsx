@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { GYM_INFO } from '../data/gymInfo';
 import {
   Dumbbell,
@@ -6,28 +7,28 @@ import {
   Instagram,
   Star,
   MapPin,
-  Heart,
-  ShieldCheck,
+  Clock,
+  Compass,
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-neutral-950 border-t border-neutral-800/80 pt-16 pb-12 text-neutral-400 text-xs sm:text-sm">
+    <footer className="bg-neutral-950 border-t border-neutral-800/80 pt-16 pb-24 sm:pb-12 text-neutral-400 text-xs sm:text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-neutral-900">
           {/* Brand Col */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-lime-500 flex items-center justify-center text-neutral-950 shadow-md shadow-emerald-500/20">
                 <Dumbbell className="w-5 h-5 stroke-[2.5]" />
               </div>
               <span className="font-heading text-xl font-black text-white uppercase tracking-tight">
-                Hulk's <span className="text-emerald-400">Work Zone</span>
+                Hulk&apos;s <span className="text-emerald-400">Work Zone</span>
               </span>
-            </div>
+            </Link>
 
             <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
-              Dabra's dedicated fitness center and athletic training hub. Empowering people of all fitness levels with authentic strength equipment, community support, and science-backed training tools.
+              Dabra&apos;s dedicated fitness center and athletic training hub in Madhya Pradesh. Empowering people of all fitness levels with authentic strength equipment, community support, and science-backed training tools.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -68,84 +69,88 @@ export const Footer: React.FC = () => {
             </span>
             <ul className="space-y-2 text-xs">
               <li>
-                <a href="#calculators" className="hover:text-emerald-400 transition-colors">
-                  BMI & Body Fat Calculator
-                </a>
+                <Link to="/tools/calories" className="hover:text-emerald-400 transition-colors">
+                  Calories & Macro Calculator
+                </Link>
               </li>
               <li>
-                <a href="#calculators" className="hover:text-emerald-400 transition-colors">
+                <Link to="/tools/bmi" className="hover:text-emerald-400 transition-colors">
+                  BMI & Health Range Calculator
+                </Link>
+              </li>
+              <li>
+                <Link to="/tools/bmr-tdee" className="hover:text-emerald-400 transition-colors">
                   BMR & Daily TDEE Estimator
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#calculators" className="hover:text-emerald-400 transition-colors">
-                  Macro & Protein Calculator
-                </a>
+                <Link to="/tools/body-fat" className="hover:text-emerald-400 transition-colors">
+                  Body Fat % (US Navy Method)
+                </Link>
               </li>
               <li>
-                <a href="#calculators" className="hover:text-emerald-400 transition-colors">
+                <Link to="/tools/one-rep-max" className="hover:text-emerald-400 transition-colors">
                   One-Rep Max (1RM) Estimator
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#exercises" className="hover:text-emerald-400 transition-colors">
-                  Complete Exercise Directory
-                </a>
-              </li>
-              <li>
-                <a href="#workout-builder" className="hover:text-emerald-400 transition-colors">
-                  Custom Workout Routine Builder
-                </a>
-              </li>
-              <li>
-                <a href="#timer" className="hover:text-emerald-400 transition-colors">
+                <Link to="/tools/rest-timer" className="hover:text-emerald-400 transition-colors">
                   Interval Rest Timer
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#progress" className="hover:text-emerald-400 transition-colors">
-                  Personal Record & Weight Log
-                </a>
+                <Link to="/tools" className="text-emerald-400 font-semibold hover:underline">
+                  View All 6 Tools →
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick Links & Community */}
+          {/* Training & Community */}
           <div className="lg:col-span-2 space-y-3">
             <span className="font-heading text-sm font-bold text-white uppercase tracking-wider block">
-              Gym Community
+              Training & Gym
             </span>
             <ul className="space-y-2 text-xs">
               <li>
-                <a href="#reviews" className="hover:text-emerald-400 transition-colors">
-                  Review Writing Assistant
-                </a>
+                <Link to="/start" className="text-emerald-400 font-semibold hover:underline">
+                  Start Here (Roadmap)
+                </Link>
               </li>
               <li>
-                <a href="#ai-coach" className="hover:text-emerald-400 transition-colors">
-                  Coach Hulk AI Assistant
-                </a>
+                <Link to="/exercises" className="hover:text-emerald-400 transition-colors">
+                  Exercise Form Library
+                </Link>
               </li>
               <li>
-                <a href="#membership" className="hover:text-emerald-400 transition-colors">
-                  Membership Plans & Fees
-                </a>
+                <Link to="/workout-builder" className="hover:text-emerald-400 transition-colors">
+                  Workout Plan Builder
+                </Link>
               </li>
               <li>
-                <a href="#location" className="hover:text-emerald-400 transition-colors">
-                  Location & Timing
-                </a>
+                <Link to="/progress" className="hover:text-emerald-400 transition-colors">
+                  Progress & PR Tracker
+                </Link>
               </li>
               <li>
-                <a
-                  href={GYM_INFO.googleReviewsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-amber-400 hover:text-amber-300 transition-colors font-medium flex items-center gap-1"
-                >
-                  <Star className="w-3 h-3 fill-amber-400" />
-                  <span>Google Reviews</span>
-                </a>
+                <Link to="/ai-coach" className="hover:text-emerald-400 transition-colors">
+                  AI Fitness Coach
+                </Link>
+              </li>
+              <li>
+                <Link to="/membership" className="hover:text-emerald-400 transition-colors">
+                  Gym Memberships
+                </Link>
+              </li>
+              <li>
+                <Link to="/reviews" className="hover:text-emerald-400 transition-colors">
+                  Member Reviews
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="hover:text-emerald-400 transition-colors">
+                  Help & FAQs
+                </Link>
               </li>
             </ul>
           </div>
@@ -167,15 +172,16 @@ export const Footer: React.FC = () => {
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <Instagram className="w-4 h-4 text-pink-400 shrink-0" />
-                <a
-                  href={GYM_INFO.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:text-emerald-400 font-bold"
+                <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>5:30–10:30 AM | 4:30–10:00 PM</span>
+              </div>
+              <div className="pt-2">
+                <Link
+                  to="/contact"
+                  className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1"
                 >
-                  @hulks_work_zone
-                </a>
+                  <span>Location Map & Driving Directions →</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -184,11 +190,11 @@ export const Footer: React.FC = () => {
         {/* Disclaimer & Bottom Credits */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
           <p className="max-w-2xl leading-relaxed text-center md:text-left">
-            <strong>Educational Disclaimer:</strong> The calculations, workout routines, and AI advice provided on this platform are for fitness education and informational purposes only. Consult a physician or medical professional before commencing any new rigorous exercise regime.
+            <strong>Educational Disclaimer:</strong> The calculations, workout routines, and AI advice provided on this platform are for fitness education and informational purposes only. Always consult a physician or medical professional before commencing any new exercise program.
           </p>
 
           <p className="text-center md:text-right shrink-0">
-            © {new Date().getFullYear()} {GYM_INFO.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {GYM_INFO.name}. All rights reserved.
           </p>
         </div>
       </div>

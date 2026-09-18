@@ -99,16 +99,16 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectPlan }
             <div>
               <h4 className="text-sm font-bold text-white">First Time at Hulk's Work Zone?</h4>
               <p className="text-xs text-neutral-400">
-                Walk in for a trial workout session, inspect our equipment, and talk to our coaches.
+                Walk in during open hours to tour our facility, inspect equipment, and consult with our coaches.
               </p>
             </div>
           </div>
           <button
             type="button"
-            onClick={() => onSelectPlan('Trial Session')}
+            onClick={() => onSelectPlan('Facility Visit & Consultation')}
             className="px-5 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 text-white font-bold text-xs whitespace-nowrap transition-colors"
           >
-            Request Free Trial Walk-in
+            Enquire About Joining
           </button>
         </div>
       </div>

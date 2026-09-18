@@ -160,7 +160,7 @@ export const GymLocation: React.FC<GymLocationProps> = ({ onOpenEnquiry }) => {
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-neutral-950 bg-amber-400 hover:bg-amber-300 transition-colors shadow-md shadow-amber-500/20"
               >
                 <Star className="w-4 h-4 fill-neutral-950" />
-                <span>Google Reviews</span>
+                <span>View Google Reviews</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>

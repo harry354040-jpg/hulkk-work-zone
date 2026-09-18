@@ -28,7 +28,7 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({
       id: 'welcome-msg',
       role: 'assistant',
       content:
-        "Namaste aur welcome to Hulk's Work Zone! 💪 Mai hoon aapka AI Fitness Coach.\n\nAap mujhse **Hindi**, **Hinglish**, ya **English** mein workouts, nutrition, protein, BMR/TDEE calculations, ya beginner gym routines ke baare mein kuch bhi pooch sakte hain.\n\nKaise shuru karein?",
+        "Welcome to Hulk's Work Zone! Sir / Ma'am, I am Coach Hulk, your training assistant.\n\nYou can ask me any question regarding exercise technique, workout routines, calorie & macro targets, or gym training in English, Hindi, or Hinglish.\n\nHow may I assist you with your fitness journey today?",
       timestamp: Date.now(),
     },
   ]);
@@ -42,12 +42,11 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const suggestedPrompts = [
-    'Beginner workout kaise start karu? 💪',
-    'BMR aur TDEE mein kya difference hai?',
-    'Protein ke baare mein simple language mein samjhao.',
-    'Progressive overload kya hota hai?',
-    'Leg day ke basic exercises batao.',
-    'Workout consistency kaise improve karun?',
+    'Sir, how do I calculate my daily protein and calorie intake?',
+    'What is the best 4-day workout split for lean muscle growth?',
+    'Could you explain the principle of progressive overload?',
+    'Sir, what are the primary technique cues for the Barbell Bench Press?',
+    'How should a beginner safely structure warm-up sets?',
   ];
 
   const scrollToBottom = () => {
@@ -103,16 +102,35 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({
         }),
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type') || '';
+      let data: any = null;
+
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const rawText = await res.text();
+        if (!res.ok) {
+          throw new Error(
+            res.status === 404
+              ? 'Backend server endpoint (/api/chat) nahi mila. Kripya check karein ki server run ho raha hai ya hosting configuration me serverless function set hai.'
+              : `Server error (${res.status}): ${rawText.slice(0, 100) || 'Invalid server response'}`
+          );
+        }
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          throw new Error('Server se unexpected response mila. Kripya thodi der baad try karein.');
+        }
+      }
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to contact AI Coach.');
+        throw new Error(data?.error || 'Failed to contact AI Coach.');
       }
 
       const botMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: data.reply || 'Koi response nahi mila, kripya dobara try karein.',
+        content: data?.reply || 'Koi response nahi mila, kripya dobara try karein.',
         timestamp: Date.now(),
       };
 

@@ -19,5 +19,8 @@ export const GYM_INFO: GymInfo = {
   latitude: 25.8808364,
   longitude: 78.3257884,
   tagline: "UNLEASH YOUR INNER BEAST",
-  shortBio: "Dabra's premier strength, conditioning, and transformation zone. Built for athletes, beginners, and anyone dedicated to real, consistent physical progress."
+  shortBio: "Dabra's premier strength, conditioning, and transformation zone. Built for athletes, beginners, and anyone dedicated to real, consistent physical progress.",
+  rating: 4.8,
+  reviewsCount: 120,
+  googleMapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3587.8936662494593!2d78.32321347604473!3d25.88083637727402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39771f4531185fcd%3A0xcc5f175e7ce10714!2sHulk's%20workzone!5e0!3m2!1sen!2sin!4v1710777600000!5m2!1sen!2sin"
 };

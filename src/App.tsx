@@ -1,30 +1,53 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { ReviewAssistant } from './components/ReviewAssistant';
-import { AiAssistant } from './components/AiAssistant';
-import { CalculatorHub } from './components/CalculatorHub';
-import { ExerciseLibrary } from './components/ExerciseLibrary';
-import { WorkoutBuilder } from './components/WorkoutBuilder';
-import { RestTimer } from './components/RestTimer';
-import { ProgressTracker } from './components/ProgressTracker';
-import { MembershipPlans } from './components/MembershipPlans';
-import { GymLocation } from './components/GymLocation';
-import { EnquiryModal } from './components/EnquiryModal';
 import { Footer } from './components/Footer';
-import { ExerciseItem } from './types';
-import { GYM_INFO } from './data/gymInfo';
-import { Phone, Star, Sparkles } from 'lucide-react';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { ScrollToTop } from './components/ScrollToTop';
+import { EnquiryModal } from './components/EnquiryModal';
+import { ReviewModal } from './components/ReviewModal';
 
-export default function App() {
+// Pages
+import { HomePage } from './pages/HomePage';
+import { StartHerePage } from './pages/StartHerePage';
+import { ToolsHubPage } from './pages/tools/ToolsHubPage';
+import { BmiPage } from './pages/tools/BmiPage';
+import { BmrTdeePage } from './pages/tools/BmrTdeePage';
+import { CaloriesMacrosPage } from './pages/tools/CaloriesMacrosPage';
+import { BodyFatPage } from './pages/tools/BodyFatPage';
+import { OneRepMaxPage } from './pages/tools/OneRepMaxPage';
+import { RestTimerPage } from './pages/tools/RestTimerPage';
+import { ExercisesPage } from './pages/ExercisesPage';
+import { ExerciseDetailPage } from './pages/ExerciseDetailPage';
+import { WorkoutBuilderPage } from './pages/WorkoutBuilderPage';
+import { ProgressPage } from './pages/ProgressPage';
+import { AiCoachPage } from './pages/AiCoachPage';
+import { MembershipPage } from './pages/MembershipPage';
+import { ReviewsPage } from './pages/ReviewsPage';
+import { ContactPage } from './pages/ContactPage';
+import { FaqPage } from './pages/FaqPage';
+
+import { ExerciseItem } from './types';
+import { openWhatsAppMembershipEnquiry } from './utils/whatsappEnquiry';
+
+function AppContent() {
+  const navigate = useNavigate();
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
   const [selectedPlanForEnquiry, setSelectedPlanForEnquiry] = useState<string | undefined>(undefined);
-  const [aiPrompt, setAiPrompt] = useState<string | undefined>(undefined);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [exerciseForWorkout, setExerciseForWorkout] = useState<ExerciseItem | null>(null);
 
   const handleOpenEnquiry = (planName?: string) => {
-    setSelectedPlanForEnquiry(planName);
+    if (planName) {
+      openWhatsAppMembershipEnquiry(planName);
+      return;
+    }
+    setSelectedPlanForEnquiry(undefined);
     setIsEnquiryOpen(true);
+  };
+
+  const handleMembershipPlanSelect = (planName: string) => {
+    openWhatsAppMembershipEnquiry(planName);
   };
 
   const handleCloseEnquiry = () => {
@@ -33,118 +56,153 @@ export default function App() {
   };
 
   const handleAskAi = (prompt: string) => {
-    setAiPrompt(prompt);
-    // Scroll smoothly to AI coach section
-    const el = document.getElementById('ai-coach');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate('/ai-coach', { state: { initialPrompt: prompt } });
   };
 
   const handleAddExerciseToWorkout = (exercise: ExerciseItem) => {
     setExerciseForWorkout(exercise);
-    // Scroll smoothly to workout builder
-    const el = document.getElementById('workout-builder');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleExploreTools = () => {
-    const el = document.getElementById('calculators');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate('/workout-builder');
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-emerald-500 selection:text-neutral-950">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-emerald-500 selection:text-neutral-950">
+      <ScrollToTop />
+
       {/* Top Fixed Navigation */}
-      <Navbar
-        onOpenEnquiry={() => handleOpenEnquiry()}
-        activeSection="home"
-      />
+      <Navbar onOpenEnquiry={handleOpenEnquiry} />
 
-      {/* Main Page Flow */}
-      <main>
-        {/* Hero Section with Google Review Trust Card */}
-        <Hero
-          onOpenEnquiry={() => handleOpenEnquiry()}
-          onExploreTools={handleExploreTools}
-        />
+      {/* Primary Routing Content */}
+      <main className="flex-1">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                onOpenEnquiry={handleOpenEnquiry}
+                onOpenReviewModal={() => setIsReviewModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/start"
+            element={
+              <StartHerePage
+                onOpenEnquiry={handleOpenEnquiry}
+                onAskAi={handleAskAi}
+              />
+            }
+          />
 
-        {/* Interactive Review Writing Assistant */}
-        <ReviewAssistant />
+          {/* Tools Hub & Sub-Routes */}
+          <Route
+            path="/tools"
+            element={<ToolsHubPage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/bmi"
+            element={<BmiPage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/bmr-tdee"
+            element={<BmrTdeePage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/calories"
+            element={<CaloriesMacrosPage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/body-fat"
+            element={<BodyFatPage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/one-rep-max"
+            element={<OneRepMaxPage onAskAi={handleAskAi} />}
+          />
+          <Route
+            path="/tools/rest-timer"
+            element={<RestTimerPage />}
+          />
 
-        {/* Real AI Fitness Assistant (Bilingual / Coach Hulk) */}
-        <AiAssistant
-          externalPrompt={aiPrompt}
-          onClearExternalPrompt={() => setAiPrompt(undefined)}
-        />
+          {/* Exercise Library & Detail */}
+          <Route
+            path="/exercises"
+            element={<ExercisesPage onAddToWorkout={handleAddExerciseToWorkout} />}
+          />
+          <Route
+            path="/exercises/:exerciseId"
+            element={<ExerciseDetailPage onAskAi={handleAskAi} />}
+          />
 
-        {/* Comprehensive Scientific Fitness Calculator Hub */}
-        <CalculatorHub onAskAi={handleAskAi} />
+          {/* Workout Builder & Progress */}
+          <Route
+            path="/workout-builder"
+            element={
+              <WorkoutBuilderPage
+                incomingExercise={exerciseForWorkout}
+                onClearIncomingExercise={() => setExerciseForWorkout(null)}
+                onAskAi={handleAskAi}
+              />
+            }
+          />
+          <Route
+            path="/progress"
+            element={<ProgressPage />}
+          />
 
-        {/* Searchable Exercise Directory & Movement Guides */}
-        <ExerciseLibrary onAddToWorkout={handleAddExerciseToWorkout} />
+          {/* AI Coach */}
+          <Route
+            path="/ai-coach"
+            element={<AiCoachPage />}
+          />
 
-        {/* Custom Workout Routine Builder & Volume Calculator */}
-        <WorkoutBuilder
-          incomingExercise={exerciseForWorkout}
-          onClearIncomingExercise={() => setExerciseForWorkout(null)}
-          onAskAi={handleAskAi}
-        />
+          {/* Gym Hub Pages */}
+          <Route
+            path="/membership"
+            element={<MembershipPage onSelectPlan={handleMembershipPlanSelect} />}
+          />
+          <Route
+            path="/reviews"
+            element={<ReviewsPage onOpenReviewModal={() => setIsReviewModalOpen(true)} />}
+          />
+          <Route
+            path="/contact"
+            element={<ContactPage onOpenEnquiry={handleOpenEnquiry} />}
+          />
+          <Route
+            path="/faq"
+            element={<FaqPage onOpenEnquiry={() => handleOpenEnquiry()} />}
+          />
 
-        {/* Interval Rest Timer */}
-        <RestTimer />
-
-        {/* Personal Progress & PR Tracker */}
-        <ProgressTracker />
-
-        {/* Membership Plans & Pricing */}
-        <MembershipPlans onSelectPlan={(plan) => handleOpenEnquiry(plan)} />
-
-        {/* Location, Hours, Contact, and FAQs */}
-        <GymLocation onOpenEnquiry={() => handleOpenEnquiry()} />
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
-      {/* Footer */}
+      {/* Global Footer */}
       <Footer />
 
-      {/* Membership & Training Enquiry Modal */}
+      {/* Persistent Mobile Bottom Bar */}
+      <MobileBottomNav />
+
+      {/* Global Modals */}
       <EnquiryModal
         isOpen={isEnquiryOpen}
         onClose={handleCloseEnquiry}
         initialPlan={selectedPlanForEnquiry}
       />
 
-      {/* Mobile Sticky Quick Action Bar */}
-      <div className="sm:hidden fixed bottom-3 left-3 right-3 z-40 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md p-2 rounded-2xl border border-neutral-800 shadow-2xl">
-        <a
-          href={`tel:${GYM_INFO.phoneRaw}`}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-neutral-800 text-xs font-bold text-white border border-neutral-700 active:scale-95 transition-transform"
-        >
-          <Phone className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Call Gym</span>
-        </a>
-
-        <a
-          href={GYM_INFO.googleReviewsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-amber-400 text-xs font-bold text-neutral-950 active:scale-95 transition-transform shadow-md shadow-amber-500/20"
-        >
-          <Star className="w-3.5 h-3.5 fill-current" />
-          <span>Review ⭐</span>
-        </a>
-
-        <button
-          onClick={() => handleOpenEnquiry()}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-400 text-xs font-bold text-neutral-950 active:scale-95 transition-transform shadow-md shadow-emerald-500/20"
-        >
-          <span>Join Now</span>
-        </button>
-      </div>
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+      />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }

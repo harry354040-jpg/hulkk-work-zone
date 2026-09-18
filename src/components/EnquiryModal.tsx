@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GYM_INFO } from '../data/gymInfo';
-import { X, Send, Phone, CheckCircle, AlertCircle, Dumbbell } from 'lucide-react';
+import { X, Send, Phone, CheckCircle, AlertCircle, Dumbbell, MessageCircle } from 'lucide-react';
+import { openWhatsAppMembershipEnquiry, getMembershipWhatsAppUrl } from '../utils/whatsappEnquiry';
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -57,6 +58,14 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
       }
 
       setIsSuccess(true);
+      // Trigger WhatsApp with the user's name, plan, and goal
+      openWhatsAppMembershipEnquiry({
+        name: name.trim(),
+        goal,
+        timing,
+        planName: initialPlan || 'Gym Membership',
+        notes: message.trim(),
+      });
     } catch (err: any) {
       console.error('Enquiry submission error:', err);
       setErrorMsg(err.message || 'Submission failed. Please call us directly.');
@@ -113,16 +122,32 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href={`tel:${GYM_INFO.phoneRaw}`}
+              <button
+                type="button"
+                onClick={() =>
+                  openWhatsAppMembershipEnquiry({
+                    name: name.trim(),
+                    goal,
+                    timing,
+                    planName: initialPlan || 'Gym Membership',
+                    notes: message.trim(),
+                  })
+                }
                 className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-neutral-950 bg-emerald-400 hover:bg-emerald-300 transition-colors"
               >
-                <Phone className="w-4 h-4" />
-                <span>Call Now: {GYM_INFO.phone}</span>
+                <MessageCircle className="w-4 h-4" />
+                <span>Chat on WhatsApp</span>
+              </button>
+              <a
+                href={`tel:${GYM_INFO.phoneRaw}`}
+                className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-neutral-900 border border-neutral-800 hover:bg-neutral-850 transition-colors"
+              >
+                <Phone className="w-4 h-4 text-emerald-400" />
+                <span>Call: {GYM_INFO.phone}</span>
               </a>
               <button
                 onClick={onClose}
-                className="py-2.5 px-4 rounded-xl text-xs font-semibold text-neutral-300 bg-neutral-800 hover:bg-neutral-750 transition-colors"
+                className="py-2.5 px-4 rounded-xl text-xs font-semibold text-neutral-400 bg-neutral-800 hover:bg-neutral-750 hover:text-white transition-colors"
               >
                 Done
               </button>

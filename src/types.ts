@@ -18,6 +18,9 @@ export interface GymInfo {
   longitude: number;
   tagline: string;
   shortBio: string;
+  rating?: number;
+  reviewsCount?: number;
+  googleMapsEmbedUrl?: string;
 }
 
 export interface ChatMessage {
@@ -111,18 +114,20 @@ export interface OneRepMaxResult {
 export interface ExerciseItem {
   id: string;
   name: string;
-  hindiName?: string;
   category: 'Chest' | 'Back' | 'Shoulders' | 'Biceps' | 'Triceps' | 'Legs' | 'Glutes' | 'Core' | 'Full Body';
   equipment: 'Barbell' | 'Dumbbell' | 'Cable / Machine' | 'Bodyweight';
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  targetMuscles: string[];
+  primaryMuscles: string[];
+  secondaryMuscles?: string[];
   instructions: string[];
-  beginnerNotes: string;
+  beginnerNotes?: string;
   commonMistakes: string[];
   safetyNotes: string;
+  alternatives?: string[];
 }
 
 export interface WorkoutExerciseItem {
+  id: string;
   exerciseId: string;
   name: string;
   category: string;
@@ -130,13 +135,24 @@ export interface WorkoutExerciseItem {
   reps: number;
   weightKg: number;
   restSeconds: number;
+  notes?: string;
+}
+
+export interface WorkoutDay {
+  id: string;
+  dayName: string; // e.g. "Day 1: Chest & Triceps"
+  focus: string;
+  exercises: WorkoutExerciseItem[];
 }
 
 export interface WorkoutPlan {
   id: string;
   title: string;
-  exercises: WorkoutExerciseItem[];
-  totalVolume: number;
+  goal: 'muscle_gain' | 'fat_loss' | 'strength' | 'general_fitness';
+  experienceLevel: 'beginner' | 'intermediate' | 'advanced';
+  daysPerWeek: number;
+  equipment: string;
+  days: WorkoutDay[];
   updatedAt: number;
 }
 

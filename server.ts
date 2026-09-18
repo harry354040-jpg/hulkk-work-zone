@@ -50,29 +50,34 @@ function checkRateLimit(ip: string): boolean {
 
 // System Prompt for AI Fitness Coach
 const SYSTEM_INSTRUCTION = `You are "Coach Hulk", the official AI Fitness Coach for "Hulk's Work Zone" gym located in Dabra, Madhya Pradesh, India.
-Your mission is to guide gym members and visitors with encouraging, scientific, realistic, and friendly fitness advice.
+Your mission is to guide gym members and visitors with encouraging, scientific, realistic, and respectful fitness advice.
 
-CRITICAL LANGUAGE REQUIREMENT:
-1. Automatically detect the user's language and style:
-   - If user asks in Hindi (Devanagari): Respond in natural, warm Hindi.
-   - If user asks in Hinglish (Latin script Hindi, e.g. "bhai chest workout kaise start karu", "protein kitna lena chahiye", "fat loss ke liye tips do"): Respond in natural, conversational Hinglish with words like "Bhai", "Dost", "Suno", "Aap", "Bilkul", etc.
+CRITICAL TONE & LANGUAGE REQUIREMENTS:
+1. STRICT RESPECTFUL ADDRESS: Always address the user respectfully as "Sir" or "Ma'am" (e.g., "Sir, based on your goal...", "Ma'am, for a beginner...").
+   - NEVER use casual slang such as "Bhai", "Bro", "Yaar", or "Dost".
+   - Maintain a friendly, respectful, professional, simple, and supportive tone at all times.
+2. CONCISE & ACTIONABLE: Avoid huge walls of text. Keep your responses to 1-2 short paragraphs or clean bullet points, followed immediately by a direct actionable recommendation.
+3. LANGUAGE DETECTION:
+   - If user asks in Hindi / Hinglish: Respond in respectful, polite Hinglish/Hindi (using "Aap", "Sir", "Ma'am", polite verbs).
    - If user asks in English: Respond in clear, professional English.
-   - If user mixes languages: Respond in mixed natural Hinglish/English.
-2. Tone: Friendly, encouraging, energetic, practical, and non-judgmental.
-3. Structure: Use bullet points, bold highlights, and clean short paragraphs.
+4. WEBSITE INTEGRATION & NAVIGATION:
+   - When asked about calculators, recommend the Fitness Tools section (/tools).
+   - When asked about exercises or form, recommend the Exercise Library (/exercises).
+   - When asked about workout routines, recommend the Workout Builder (/workout-builder).
+   - When asked about timing between sets, recommend the Rest Timer (/tools/rest-timer).
+   - When asked about joining, membership, or visiting in Dabra, provide the gym details (Phone: 8770506113, Dabra, MP) and suggest the Membership section (/membership).
 
 FITNESS CAPABILITIES:
-- Explain training principles (progressive overload, reps in reserve, warmups, recovery, muscle splits).
+- Explain training principles (progressive overload, rest periods, warmups, recovery, muscle splits).
 - Explain nutrition concepts (calories, BMR, TDEE, protein intake, macro distribution, hydration).
 - Break down exercise technique, common form mistakes, and gym safety.
-- Explain calculator results when the user pastes or mentions their stats (e.g. BMI, BMR, 1RM, macros).
-- Recommend visiting Hulk's Work Zone in Dabra (Phone: 8770506113) for hands-on gym training.
+- Explain calculator results when the user mentions their numbers (e.g. BMI, BMR, 1RM, macros).
 
 SAFETY & MEDICAL CONSTRAINTS:
 - NEVER diagnose medical conditions or injuries.
 - NEVER prescribe medications, steroids, SARMs, or dangerous substances.
 - NEVER promote crash starvation diets or extreme unscientific dehydration.
-- For pain or injury, advise stopping the exercise and consulting a qualified doctor or physiotherapist.`;
+- For pain or injury, advise stopping the exercise and consulting a qualified medical doctor or physiotherapist.`;
 
 // 1. Health check endpoint
 app.get('/api/health', (req: Request, res: Response) => {
@@ -216,23 +221,35 @@ app.post('/api/chat', async (req: Request, res: Response) => {
 function generateCoachFallbackResponse(userPrompt: string): string {
   const lower = userPrompt.toLowerCase();
 
+  if (lower.includes('calculator') || lower.includes('bmi') || lower.includes('tdee') || lower.includes('bmr') || lower.includes('macro') || lower.includes('1rm')) {
+    return `Sir, you can calculate your exact numbers right on this platform:\n\n- **BMI & Body Fat**: Find your weight status and composition.\n- **BMR & TDEE**: Discover your daily maintenance calories.\n- **Protein & Macros**: Tailor your grams per day based on your training goal.\n\nOpen the **Fitness Tools** section to run your calculation instantly.`;
+  }
+
+  if (lower.includes('workout') || lower.includes('routine') || lower.includes('schedule') || lower.includes('split')) {
+    return `Sir, consistency beats complexity every time:\n\n- Beginners usually thrive on **3 full-body sessions per week** or a **4-day upper/lower split**.\n- Focus on compound movements: Squat, Bench Press, Deadlift, Overhead Press, and Rows.\n\nYou can generate an individualized routine directly in our **Workout Builder** section!`;
+  }
+
   if (lower.includes('bicep') || lower.includes('tricep') || lower.includes('arm')) {
-    return `**Coach Hulk's Arm Training Tips 💪**\n\n- **Biceps**: Incline Dumbbell Curls (peak stretch) + Barbell Curl (overload) — 3-4 sets each, 8-12 reps.\n- **Triceps**: Cable Pushdowns + Overhead French Press (long head development) — 3-4 sets.\n- **Key Secret**: Focus on full elbow extension and controlled 2-second eccentrics rather than swinging heavy weights!`;
+    return `Sir, for arm hypertrophy focus on controlled tempos:\n\n- **Biceps**: Incline Dumbbell Curls (deep stretch) + Barbell Curl (overload) — 3 sets, 8–12 reps.\n- **Triceps**: Cable Pushdowns + Overhead Extensions (long head) — 3 sets, 10–12 reps.\n\nCheck our **Exercise Library** for full technique breakdowns and common mistakes to avoid.`;
   }
 
   if (lower.includes('chest') || lower.includes('bench')) {
-    return `**Coach Hulk's Chest Hypertrophy Guide 🏋️‍♂️**\n\n- **Flat Barbell / Dumbbell Press**: 3-4 sets, 6-10 reps (Compound heavy driver)\n- **Incline Dumbbell Press (30° angle)**: 3-4 sets, 8-12 reps (Upper clavicular head)\n- **Cable Crossover / Pec Dec Flye**: 3 sets, 12-15 reps (Deep stretch & peak contraction)\n- *Cue*: Retract your scapula (shoulders back and down) to protect your rotator cuff!`;
+    return `Sir, here is a concise chest development breakdown:\n\n- **Barbell Bench Press**: 3–4 sets, 6–8 reps for mechanical tension.\n- **Incline Dumbbell Press (30°)**: 3 sets, 8–12 reps for the upper clavicular head.\n- **Cable Flye**: 3 sets, 12–15 reps for peak contraction.\n\n*Form Tip*: Retract your scapulae (pull shoulders back and down) to safeguard your rotator cuffs.`;
   }
 
   if (lower.includes('diet') || lower.includes('protein') || lower.includes('khana')) {
-    return `**Coach Hulk's Nutrition Rulebook 🥗**\n\n1. **Protein**: Aim for 1.6g to 2.2g per kg of bodyweight (Eggs, chicken, paneer, soya, whey protein, dal).\n2. **Caloric Balance**: \n   - For Fat Loss: Eat 300-500 kcal below maintenance (TDEE).\n   - For Muscle Gain: Eat 200-300 kcal above maintenance with progressive overload.\n3. **Hydration**: At least 3.5 to 4.5 liters of water daily.`;
+    return `Sir, nutrition principles to support your training:\n\n1. **Protein**: Aim for 1.6g to 2.2g per kg of bodyweight (eggs, chicken, paneer, soya, dal, whey).\n2. **Caloric Balance**: A moderate 300–400 kcal deficit for fat loss, or 250–350 kcal surplus for clean muscle building.\n3. **Hydration**: Drink 3.5 to 4.5 liters of water daily.\n\nYou can calculate your exact target in our **Calorie & Macro Calculator**!`;
   }
 
   if (lower.includes('weight loss') || lower.includes('fat loss') || lower.includes('motapa')) {
-    return `**Coach Hulk's Fat Loss Formula 🔥**\n\n1. **Caloric Deficit**: Diet controls fat loss, weight training preserves muscle.\n2. **Daily Steps**: Hit 8,000 - 10,000 steps daily (NEAT burning).\n3. **Strength Training**: Don't just do cardio! Lift weights 4-5 days a week to prevent muscle wasting.\n4. **Consistency**: 0.5kg to 0.8kg loss per week is healthy and sustainable.`;
+    return `Sir, sustainable fat loss relies on three pillars:\n\n1. **Moderate Caloric Deficit**: 300–500 kcal below maintenance.\n2. **Resistance Training**: Lift weights 3–4 days a week to preserve lean muscle tissue.\n3. **Daily Steps**: Aim for 8,000–10,000 daily steps for steady non-exercise calorie expenditure.`;
   }
 
-  return `**Namaste! Coach Hulk here at Hulk's Work Zone, Dabra! 🏋️‍♂️**\n\nMaine aapka message dekha: "${userPrompt}"\n\nAgar aap fitness journey start kar rahe hain ya plateaus todna chahte hain:\n- **Consistency**: Week me kam se kam 4-5 din dedicated workout karein.\n- **Progressive Overload**: Har week rep ya thoda weight badhane ki koshish karein.\n- **Rest & Sleep**: 7-8 ghante ki proper recovery zaroori hai.\n\nKoi specific sawal ho jaise *Chest workout*, *Protein intake*, ya *Weight loss*, zaroor batayein! Aap seedhe Dabra gym par bhi mil sakte hain (Call: **8770506113**).`;
+  if (lower.includes('membership') || lower.includes('fees') || lower.includes('price') || lower.includes('join') || lower.includes('dabra')) {
+    return `Sir, you are welcome to visit Hulk's Work Zone in Dabra!\n\n- **Hours**: Morning 5:30 AM – 10:30 AM, Evening 4:30 PM – 10:00 PM.\n- **Plans**: 1 Month (₹1,200), 3 Months (₹3,200), 6 Months (₹5,800), and Annual (₹10,500).\n- **Phone**: **8770506113**.\n\nPlease visit the **Membership** page or tap **Join / Enquire** to connect with our team!`;
+  }
+
+  return `Sir, welcome to Hulk's Work Zone! I am Coach Hulk, your training assistant.\n\n- Whether you need help with **exercise technique**, **calculating calories**, or **building a workout**, I am here to guide you.\n- For in-person training, our gym in Dabra is equipped with top-tier strength machines, Olympic barbells, and certified trainers.\n\nFeel free to ask any question or navigate to our **Fitness Tools** or **Exercise Library**!`;
 }
 
 // 3. Enquiry / Lead Generation Endpoint
