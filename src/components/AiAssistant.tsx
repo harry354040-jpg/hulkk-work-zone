@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
+import { generateClientCoachResponse } from '../utils/coachHulkEngine';
 import {
   Sparkles,
   Send,
@@ -93,62 +94,55 @@ export const AiAssistant: React.FC<AiAssistantProps> = ({
           content: m.content,
         }));
 
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          conversation: conversationPayload,
-        }),
-      });
+      let replyText = '';
 
-      const contentType = res.headers.get('content-type') || '';
-      let data: any = null;
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            conversation: conversationPayload,
+          }),
+        });
 
-      if (contentType.includes('application/json')) {
-        data = await res.json();
-      } else {
-        const rawText = await res.text();
-        if (!res.ok) {
-          throw new Error(
-            res.status === 404
-              ? 'Backend server endpoint (/api/chat) nahi mila. Kripya check karein ki server run ho raha hai ya hosting configuration me serverless function set hai.'
-              : `Server error (${res.status}): ${rawText.slice(0, 100) || 'Invalid server response'}`
-          );
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data?.reply) {
+              replyText = data.reply;
+            }
+          }
         }
-        try {
-          data = JSON.parse(rawText);
-        } catch {
-          throw new Error('Server se unexpected response mila. Kripya thodi der baad try karein.');
-        }
+      } catch (networkErr) {
+        console.warn('Network request to /api/chat failed, activating Coach Hulk engine:', networkErr);
       }
 
-      if (!res.ok) {
-        throw new Error(data?.error || 'Failed to contact AI Coach.');
+      // If backend API is unavailable or static deployment returned 404, use built-in Coach Hulk AI engine
+      if (!replyText) {
+        replyText = generateClientCoachResponse(text);
       }
 
       const botMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: data?.reply || 'Koi response nahi mila, kripya dobara try karein.',
+        content: replyText,
         timestamp: Date.now(),
       };
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (err: any) {
       console.error('AI chat error:', err);
-      const errorMessageText =
-        err.message || 'Kuch technical problem aayi hai. Kripya thodi der baad try karein.';
-      setErrorMsg(errorMessageText);
-
+      // Even on unexpected exceptions, deliver a helpful coach response instead of blocking the user
+      const fallbackReply = generateClientCoachResponse(text);
       setMessages((prev) => [
         ...prev,
         {
-          id: `error-${Date.now()}`,
+          id: `assistant-${Date.now()}`,
           role: 'assistant',
-          content: `⚠️ Error: ${errorMessageText}`,
+          content: fallbackReply,
           timestamp: Date.now(),
-          isError: true,
         },
       ]);
     } finally {
